@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enterprise ERP Portal — Secure Access</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+
+body {
+  min-height: 100vh;
+  background: #090d16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Ambient Floating Mesh Glow Orbs Background */
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.55;
+  animation: floatOrb 14s infinite alternate ease-in-out;
+  pointer-events: none;
+}
+.orb-1 {
+  width: 450px; height: 450px;
+  background: radial-gradient(circle, #6366f1 0%, #4f46e5 100%);
+  top: -120px; left: -120px;
+}
+.orb-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #ec4899 0%, #8b5cf6 100%);
+  bottom: -150px; right: -120px;
+  animation-delay: -7s;
+}
+.orb-3 {
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, #06b6d4 0%, #10b981 100%);
+  top: 35%; left: 65%;
+  animation-delay: -3.5s;
+}
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(50px, 35px) scale(1.08); }
+  100% { transform: translate(-40px, 60px) scale(0.92); }
+}
+
+/* Floating Glass Window Container */
+.window-frame {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.88), rgba(15, 23, 42, 0.92));
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 24px;
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.7), 0 0 50px rgba(99, 102, 241, 0.22);
+  overflow: hidden;
+  position: relative;
+  z-index: 10;
+  animation: windowPop 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes windowPop {
+  0% { opacity: 0; transform: translateY(35px) scale(0.94); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Window Header Bar */
+.window-header {
+  background: rgba(15, 23, 42, 0.75);
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.window-controls { display: flex; gap: 8px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; transition: transform 0.2s ease; }
+.dot:hover { transform: scale(1.2); }
+.dot-red { background: #ff5f56; box-shadow: 0 0 8px rgba(255,95,86,0.7); }
+.dot-yellow { background: #ffbd2e; box-shadow: 0 0 8px rgba(255,189,46,0.7); }
+.dot-green { background: #27c93f; box-shadow: 0 0 8px rgba(39,201,63,0.7); }
+
+.window-title {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* Window Body */
+.window-body { padding: 34px 30px; }
+
+/* Interactive Tab Switcher */
+.tab-switcher {
+  display: flex;
+  background: rgba(15, 23, 42, 0.65);
+  border-radius: 14px;
+  padding: 5px;
+  margin-bottom: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+.tab-btn {
+  flex: 1;
+  padding: 11px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #94a3b8;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tab-btn.active {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.45);
+}
+
+/* Form Styling */
+.form-group { margin-bottom: 20px; }
+.form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+input, select {
+  width: 100%;
+  padding: 13px 16px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: #f8fafc;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+input::placeholder { color: #64748b; }
+select option { background: #0f172a; color: #f8fafc; }
+
+input:focus, select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+  background: rgba(15, 23, 42, 0.95);
+}
+
+/* Action Button */
+.btn-submit {
+  width: 100%;
+  padding: 14px;
+  margin-top: 10px;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  background-size: 200% auto;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+  transition: all 0.4s ease;
+}
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(168, 85, 247, 0.55);
+  background-position: right center;
+}
+.btn-submit:active { transform: translateY(0); }
+
+/* Message Notification */
+#message {
+  text-align: center;
+  font-size: 13px;
+  margin-top: 18px;
+  padding: 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+<div class="bg-orb orb-3"></div>
+
+<!-- Floating Glass Window -->
+<div class="window-frame">
+  <div class="window-header">
+    <div class="window-controls">
+      <span class="dot dot-red"></span>
+      <span class="dot dot-yellow"></span>
+      <span class="dot dot-green"></span>
+    </div>
+    <div class="window-title">Enterprise ERP & CRM Portal</div>
+  </div>
+
+  <div class="window-body">
+    <div class="tab-switcher">
+      <button class="tab-btn active" id="tabLogin">Sign In</button>
+      <button class="tab-btn" id="tabRegister">Create Account</button>
+    </div>
+
+    <!-- Login Form -->
+    <div id="loginSection">
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" placeholder="name@company.com" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn-submit">Sign In to Workspace →</button>
+      </form>
+    </div>
+
+    <!-- Register Form -->
+    <div id="registerSection" class="hidden">
+      <form id="registerForm">
+        <div class="form-group">
+          <label>Account Role</label>
+          <select id="registerRole">
+            <option value="admin">HR / ERP Admin</option>
+            <option value="employee">Employee</option>
+          </select>
+        </div>
+        <div class="form-group hidden" id="empIdGroup">
+          <label>Employee ID</label>
+          <input type="text" id="registerEmployeeId" placeholder="e.g. EMP001" />
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="registerEmail" placeholder="name@company.com" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="registerPassword" placeholder="Create password" required />
+        </div>
+        <button type="submit" class="btn-submit">Create Account →</button>
+      </form>
+    </div>
+
+    <p id="message"></p>
+  </div>
+</div>
+
+<script>
+var BASE_URL = 'http://localhost:5002/api';
+
+try {
+  var existingToken = localStorage.getItem('hrToken');
+  var existingRole = localStorage.getItem('hrRole');
+  if (existingToken && existingRole) {
+    if (existingRole === 'admin') {
+      window.location.replace('hr.html');
+    } else if (existingRole === 'employee') {
+      window.location.replace('employee-dashboard.html');
+    }
+  }
+} catch (e) {
+  console.error("Auth check error:", e);
+}
+
+var loginSection = document.getElementById('loginSection');
+var registerSection = document.getElementById('registerSection');
+var messageEl = document.getElementById('message');
+var registerRole = document.getElementById('registerRole');
+var empIdGroup = document.getElementById('empIdGroup');
+var registerEmployeeId = document.getElementById('registerEmployeeId');
+var tabLogin = document.getElementById('tabLogin');
+var tabRegister = document.getElementById('tabRegister');
+
+tabLogin.addEventListener('click', function () {
+  tabLogin.classList.add('active');
+  tabRegister.classList.remove('active');
+  loginSection.classList.remove('hidden');
+  registerSection.classList.add('hidden');
+  messageEl.textContent = '';
+});
+
+tabRegister.addEventListener('click', function () {
+  tabRegister.classList.add('active');
+  tabLogin.classList.remove('active');
+  registerSection.classList.remove('hidden');
+  loginSection.classList.add('hidden');
+  messageEl.textContent = '';
+});
+
+registerRole.addEventListener('change', function () {
+  if (registerRole.value === 'employee') {
+    empIdGroup.classList.remove('hidden');
+    registerEmployeeId.required = true;
+  } else {
+    empIdGroup.classList.add('hidden');
+    registerEmployeeId.required = false;
+  }
+});
+
+document.getElementById('loginForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var email = document.getElementById('loginEmail').value.trim();
+  var password = document.getElementById('loginPassword').value;
+
+  messageEl.textContent = 'Authenticating...';
+  messageEl.style.background = 'rgba(99, 102, 241, 0.2)';
+  messageEl.style.color = '#818cf8';
+
+  fetch(BASE_URL + '/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, password: password }),
+  })
+    .then(function (res) {
+      return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+    })
+    .then(function (result) {
+      if (result.ok && result.data.token && result.data.role) {
+        localStorage.setItem('hrToken', result.data.token);
+        localStorage.setItem('hrRole', result.data.role);
+        var targetPage = result.data.role === 'admin' ? 'hr.html' : 'employee-dashboard.html';
+        window.location.href = targetPage;
+      } else {
+        messageEl.style.background = 'rgba(239, 68, 68, 0.2)';
+        messageEl.style.color = '#f87171';
+        messageEl.textContent = result.data.message || 'Login failed';
+      }
+    })
+    .catch(function (err) {
+      console.error(err);
+      messageEl.style.background = 'rgba(239, 68, 68, 0.2)';
+      messageEl.style.color = '#f87171';
+      messageEl.textContent = 'Server connection error.';
+    });
+});
+
+document.getElementById('registerForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var role = registerRole.value;
+  var employeeId = registerEmployeeId.value.trim();
+  var email = document.getElementById('registerEmail').value.trim();
+  var password = document.getElementById('registerPassword').value;
+
+  fetch(BASE_URL + '/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: email, password: password, role: role, employeeId: employeeId }),
+  })
+    .then(function (res) {
+      return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+    })
+    .then(function (result) {
+      if (result.ok) {
+        messageEl.style.background = 'rgba(34, 197, 94, 0.2)';
+        messageEl.style.color = '#4ade80';
+        messageEl.textContent = 'Account created! Switching to Sign In...';
+        document.getElementById('registerForm').reset();
+        setTimeout(function() {
+          tabLogin.click();
+        }, 1500);
+      } else {
+        messageEl.style.background = 'rgba(239, 68, 68, 0.2)';
+        messageEl.style.color = '#f87171';
+        messageEl.textContent = result.data.message;
+      }
+    })
+    .catch(function (err) {
+      console.error(err);
+      messageEl.style.background = 'rgba(239, 68, 68, 0.2)';
+      messageEl.style.color = '#f87171';
+      messageEl.textContent = 'Server connection error.';
+    });
+});
+</script>
+</body>
+</html>

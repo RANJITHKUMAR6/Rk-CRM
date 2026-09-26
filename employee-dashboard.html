@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Workspace & ERP Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+
+body {
+  min-height: 100vh;
+  background: #090d16;
+  color: #f8fafc;
+  display: flex;
+  overflow-x: hidden;
+}
+
+/* Ambient Background Orbs */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.35;
+  animation: floatOrb 18s infinite alternate ease-in-out;
+  pointer-events: none;
+  z-index: 0;
+}
+.orb-1 { width: 650px; height: 650px; background: radial-gradient(circle, #6366f1 0%, #4f46e5 100%); top: -220px; left: -220px; }
+.orb-2 { width: 700px; height: 700px; background: radial-gradient(circle, #06b6d4 0%, #10b981 100%); bottom: -260px; right: -220px; animation-delay: -8s; }
+
+@keyframes floatOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(60px, 40px) scale(1.06); }
+  100% { transform: translate(-50px, 70px) scale(0.94); }
+}
+
+/* Layout Container */
+.app-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  z-index: 10;
+}
+
+/* Left Sidebar Navigation */
+.app-sidebar {
+  width: 270px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(9, 13, 22, 0.96) 100%);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px 24px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+}
+.brand-logo svg { width: 22px; height: 22px; fill: none; stroke: #ffffff; stroke-width: 2.2; }
+.brand-title { font-size: 16px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; }
+.brand-sub { font-size: 10px; font-weight: 600; color: #34d399; text-transform: uppercase; letter-spacing: 1px; }
+
+/* User Profile Badge */
+.user-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  margin: 18px 0;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+}
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  color: #ffffff;
+}
+.user-info { flex: 1; overflow: hidden; }
+.user-name { font-size: 13px; font-weight: 700; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-role-badge { font-size: 9px; font-weight: 800; background: rgba(16, 185, 129, 0.25); color: #34d399; padding: 2px 6px; border-radius: 6px; text-transform: uppercase; }
+
+/* Navigation Links */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+}
+.nav-item svg { width: 18px; height: 18px; stroke: #94a3b8; fill: none; stroke-width: 2; transition: all 0.25s ease; }
+.nav-item:hover {
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.nav-item:hover svg { stroke: #38bdf8; transform: translateX(2px); }
+.nav-item.active {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.22) 0%, rgba(59, 130, 246, 0.22) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.2);
+}
+.nav-item.active svg { stroke: #38bdf8; }
+
+.badge-counter {
+  margin-left: auto;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  padding: 11px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
+}
+.logout-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+/* Main Content Area */
+.app-main {
+  flex: 1;
+  margin-left: 270px;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Top Bar Header */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.85));
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.page-title { font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; }
+.page-subtitle { font-size: 12px; color: #94a3b8; font-weight: 500; margin-top: 2px; }
+
+.top-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.live-clock {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #38bdf8;
+  letter-spacing: 0.5px;
+}
+.quick-compose-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  color: #ffffff;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+  transition: all 0.25s ease;
+}
+.quick-compose-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(6, 182, 212, 0.5);
+}
+.quick-compose-btn svg { width: 14px; height: 14px; stroke: #ffffff; fill: none; stroke-width: 2.2; }
+
+.bell-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.bell-icon-btn:hover { background: rgba(255, 255, 255, 0.14); }
+.bell-icon-btn svg { width: 18px; height: 18px; stroke: #f8fafc; fill: none; stroke-width: 2; }
+.bell-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  display: none;
+  box-shadow: 0 0 8px #ef4444;
+}
+
+/* Tab Panels */
+.tab-panel {
+  display: none;
+  animation: fadeIn 0.35s ease;
+}
+.tab-panel.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Punch Card */
+.punch-card {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.35);
+}
+.punch-status-title { font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+.punch-status-val { font-size: 24px; font-weight: 800; color: #ffffff; margin-top: 4px; }
+.punch-times { font-size: 13px; color: #cbd5e1; margin-top: 8px; display: flex; gap: 18px; }
+
+.btn-punch-in {
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white; border: none; border-radius: 14px;
+  font-size: 14px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  transition: all 0.25s ease;
+}
+.btn-punch-in:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(16, 185, 129, 0.55); }
+
+.btn-punch-out {
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+  color: white; border: none; border-radius: 14px;
+  font-size: 14px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(244, 63, 94, 0.4);
+  transition: all 0.25s ease;
+}
+.btn-punch-out:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(244, 63, 94, 0.55); }
+
+/* Inner Glass Card */
+.inner-card {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+}
+.inner-card h2 {
+  font-size: 17px;
+  color: #f8fafc;
+  margin-bottom: 18px;
+  font-weight: 800;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: #f8fafc;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.25s ease;
+}
+input::placeholder, textarea::placeholder { color: #64748b; }
+select option { background: #0f172a; color: #f8fafc; }
+input:focus, select:focus, textarea:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3);
+}
+
+button.btn-primary {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  color: white; border: none; border-radius: 12px;
+  font-size: 13px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 4px 18px rgba(6, 182, 212, 0.4);
+  transition: all 0.25s ease;
+}
+button.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59, 130, 246, 0.55); }
+
+button.btn-secondary {
+  padding: 9px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #f8fafc; border-radius: 10px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+}
+button.btn-secondary:hover { background: rgba(255, 255, 255, 0.18); }
+
+/* Glass Tables */
+.table-responsive { overflow-x: auto; margin-top: 14px; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+th { background: rgba(15, 23, 42, 0.85); color: #94a3b8; padding: 14px 16px; font-weight: 700; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.1); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+td { padding: 14px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); color: #e2e8f0; }
+tr:hover td { background: rgba(255, 255, 255, 0.03); }
+
+/* Badges */
+.badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.badge-present { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+.badge-absent { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+.badge-pending { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+.badge-approved { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+.badge-rejected { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+/* Progress Bar */
+.progress-bar-bg { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; margin-top: 6px; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, #38bdf8 0%, #10b981 100%); transition: width 0.4s ease; border-radius: 10px; }
+
+/* Modals */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(12px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  opacity: 0; pointer-events: none;
+  transition: all 0.3s ease;
+}
+.modal-overlay.active, .modal-overlay:not(.hidden) { opacity: 1; pointer-events: auto; }
+.modal-box {
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 24px;
+  width: 90%; max-width: 580px;
+  padding: 28px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 40px rgba(6, 182, 212, 0.3);
+  position: relative;
+  transform: scale(0.95);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-overlay.active .modal-box, .modal-overlay:not(.hidden) .modal-box { transform: scale(1); }
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.modal-title { font-size: 18px; font-weight: 800; color: #ffffff; }
+.close-modal { background: none; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; }
+.close-modal:hover { color: #ffffff; }
+
+/* Category Badges for Mail */
+.badge-direct { background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid rgba(99, 102, 241, 0.4); }
+.badge-leave { background: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4); }
+.badge-payroll { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+.badge-project { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+.badge-system { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.4); }
+</style>
+</head>
+<body>
+
+<div class="bg-orb orb-1"></div>
+<div class="bg-orb orb-2"></div>
+
+<div class="app-container">
+  <!-- LEFT SIDEBAR -->
+  <aside class="app-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div>
+        <div class="brand-title">ANTIGRAVITY</div>
+        <div class="brand-sub">Employee Workspace</div>
+      </div>
+    </div>
+
+    <div class="user-profile-card">
+      <div class="user-avatar" id="sidebarAvatar">EMP</div>
+      <div class="user-info">
+        <div class="user-name" id="empHeaderName">Employee Workspace</div>
+        <span class="user-role-badge">Employee</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item active" onclick="switchTab('dashboard')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Punch Clock & Overview</span>
+      </button>
+
+      <button class="nav-item" onclick="switchTab('mail')">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span>Mail Center</span>
+        <span class="badge-counter" id="sidebarMailBadge" style="display:none;">0</span>
+      </button>
+
+      <button class="nav-item" onclick="switchTab('projects')">
+        <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        <span>Assigned Projects</span>
+      </button>
+
+      <button class="nav-item" onclick="switchTab('assets')">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span>Hardware Assets</span>
+      </button>
+
+      <button class="nav-item" onclick="switchTab('attendance')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Attendance History</span>
+      </button>
+
+      <button class="nav-item" onclick="switchTab('leaves')">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span>Leave Requests</span>
+      </button>
+
+      <button class="nav-item" onclick="switchTab('payslips')">
+        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        <span>My Payslips</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logoutBtn">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <main class="app-main">
+    <!-- TOP APP BAR -->
+    <header class="top-bar">
+      <div>
+        <h1 class="page-title" id="pageTitle">Employee Workspace</h1>
+        <p class="page-subtitle" id="pageSubtitle">Attendance Punching, Client Deliverables & Communications</p>
+      </div>
+
+      <div class="top-controls">
+        <div class="live-clock" id="liveClockDisplay">--:--:--</div>
+        <button class="quick-compose-btn" onclick="openComposeMailModal()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Message HR</span>
+        </button>
+        <div class="bell-icon-btn" onclick="switchTab('mail')" title="Mail & Alerts">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="bell-dot" id="bellDot"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT PANELS -->
+
+    <!-- DASHBOARD PANEL -->
+    <section id="dashboardPanel" class="tab-panel active">
+      <div class="punch-card">
+        <div>
+          <div class="punch-status-title">Today's Attendance Status</div>
+          <div class="punch-status-val" id="punchStatusText">Not Punched In</div>
+          <div class="punch-times">
+            <div>Clock In: <strong id="clockInText" style="color:#4ade80;">-</strong></div>
+            <div>Clock Out: <strong id="clockOutText" style="color:#f87171;">-</strong></div>
+          </div>
+        </div>
+        <div>
+          <button class="btn-punch-in" id="punchInBtn">Clock In Now</button>
+          <button class="btn-punch-out" id="punchOutBtn" style="display:none;">Clock Out Now</button>
+        </div>
+      </div>
+
+      <div class="inner-card">
+        <h2>⚡ Workspace Overview</h2>
+        <p style="color:#94a3b8; font-size:13px; line-height:1.6;">
+          Welcome to your employee workspace portal. Use the punch clock above to log daily shift attendance. From the sidebar, view client tasks assigned to you, track your hardware assets, apply for time-off, download payslips, or message HR management directly.
+        </p>
+      </div>
+    </section>
+
+    <!-- MAIL PANEL -->
+    <section id="mailPanel" class="tab-panel">
+      <div class="inner-card">
+        <h2>Mail Center & System Notifications</h2>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Sender</th>
+                <th>Subject</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="mailTableBody"></tbody>
+          </table>
+        </div>
+        <p id="mailEmptyMsg" style="display:none; color:#64748b; margin-top:14px; text-align:center;">No mail messages in inbox.</p>
+      </div>
+    </section>
+
+    <!-- PROJECTS PANEL -->
+    <section id="projectsPanel" class="tab-panel">
+      <div class="inner-card">
+        <h2>My Assigned Client Projects</h2>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Code & Project</th>
+                <th>Client</th>
+                <th>My Tasks Progress</th>
+                <th>Milestone Tasks</th>
+              </tr>
+            </thead>
+            <tbody id="empProjTableBody"></tbody>
+          </table>
+        </div>
+        <p id="empProjEmptyMsg" style="display:none; color:#64748b; margin-top:14px;">No projects currently assigned.</p>
+      </div>
+    </section>
+
+    <!-- ASSETS PANEL -->
+    <section id="assetsPanel" class="tab-panel">
+      <div class="inner-card">
+        <h2>My Hardware Equipment & Assets</h2>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Tag</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Serial Number</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="empAssetTableBody"></tbody>
+          </table>
+        </div>
+        <p id="empAssetEmptyMsg" style="display:none; color:#64748b; margin-top:14px;">No hardware assets assigned to you.</p>
+      </div>
+    </section>
+
+    <!-- ATTENDANCE PANEL -->
+    <section id="attendancePanel" class="tab-panel">
+      <div class="inner-card">
+        <h2>My Punch History Logs</h2>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Clock In</th>
+                <th>Clock Out</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="empAttnTableBody"></tbody>
+          </table>
+        </div>
+        <p id="empAttnEmptyMsg" style="display:none; color:#64748b; margin-top:14px;">No punch records recorded yet.</p>
+      </div>
+    </section>
+
+    <!-- LEAVES PANEL -->
+    <section id="leavesPanel" class="tab-panel">
+      <div class="inner-card">
+        <h2>Apply for Leave Request</h2>
+        <div class="form-grid">
+          <select id="leaveTypeSelect">
+            <option value="Vacation">Vacation Leave</option>
+            <option value="Sick Leave">Sick Leave</option>
+            <option value="Personal">Personal Leave</option>
+            <option value="Unpaid">Unpaid Leave</option>
+          </select>
+          <input type="date" id="leaveStartInput">
+          <input type="date" id="leaveEndInput">
+        </div>
+        <textarea id="leaveReasonInput" placeholder="Reason for leave application..." rows="2" style="margin-bottom:14px;"></textarea>
+        <button class="btn-primary" id="applyLeaveBtn">Submit Application</button>
+        <p id="leaveMsg" style="margin-top:10px; font-size:13px;"></p>
+      </div>
+
+      <div class="inner-card">
+        <h2>My Submitted Leave Requests</h2>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Reason</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="empLeaveTableBody"></tbody>
+          </table>
+        </div>
+        <p id="empLeaveEmptyMsg" style="display:none; color:#64748b; margin-top:14px;">No leave applications submitted.</p>
+      </div>
+    </section>
+
+    <!-- PAYSLIPS PANEL -->
+    <section id="payslipsPanel" class="tab-panel">
+      <div class="inner-card">
+        <h2>My Monthly Payslips & Attendance Breakdown</h2>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th>Base Salary</th>
+                <th>Allowances</th>
+                <th>Manual Deductions</th>
+                <th>Missed Days Deduction</th>
+                <th>Net Pay</th>
+                <th>Issued Date</th>
+              </tr>
+            </thead>
+            <tbody id="empPayslipTableBody"></tbody>
+          </table>
+        </div>
+        <p id="empPayslipEmptyMsg" style="display:none; color:#64748b; margin-top:14px;">No payslips generated for your account yet.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- READ MAIL MODAL -->
+<div class="modal-overlay hidden" id="readMailModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="mailModalSubject">Mail Subject</div>
+      <button class="close-modal" onclick="closeReadMailModal()">&times;</button>
+    </div>
+    <div style="margin-bottom:16px; font-size:13px; color:#94a3b8;">
+      <div>From: <strong id="mailModalSender" style="color:#f8fafc;"></strong></div>
+      <div>Category: <span id="mailModalCategory" class="badge"></span></div>
+      <div>Date: <span id="mailModalDate"></span></div>
+    </div>
+    <div id="mailModalBody" style="background:rgba(15,23,42,0.8); padding:18px; border-radius:12px; font-size:13px; line-height:1.6; white-space:pre-wrap; border:1px solid rgba(255,255,255,0.1); margin-bottom:20px;"></div>
+    <div style="display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn-secondary" onclick="closeReadMailModal()">Close</button>
+      <button class="btn-primary" id="replyMailBtn">Reply HR</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPOSE MAIL MODAL -->
+<div class="modal-overlay hidden" id="composeMailModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Message HR Administration</div>
+      <button class="close-modal" onclick="closeComposeMailModal()">&times;</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:14px; margin-bottom:20px;">
+      <input type="email" id="composeRecipientInput" value="admin@company.com" placeholder="Recipient Email">
+      <input type="text" id="composeSubjectInput" placeholder="Subject">
+      <textarea id="composeBodyInput" placeholder="Write your message to HR..." rows="5"></textarea>
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:10px;">
+      <button class="btn-secondary" onclick="closeComposeMailModal()">Cancel</button>
+      <button class="btn-primary" onclick="sendMail()">Send Message</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECT TASKS MODAL -->
+<div class="modal-overlay hidden" id="empTasksModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="empTasksModalTitle">Project Tasks Checklist</div>
+      <button class="close-modal" onclick="closeEmpTasksModal()">&times;</button>
+    </div>
+    <div id="empTasksListContainer" style="display:flex; flex-direction:column; gap:10px; max-height:300px; overflow-y:auto; margin-bottom:16px;"></div>
+  </div>
+</div>
+
+<script>
+var BASE_URL = 'http://localhost:5002/api';
+var token = localStorage.getItem('hrToken');
+var role = localStorage.getItem('hrRole');
+
+if (!token || role !== 'employee') {
+  window.location.href = 'hr-login.html';
+}
+
+function authHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  };
+}
+
+function checkAuth(res) {
+  if (res.status === 401 || res.status === 403) {
+    localStorage.removeItem('hrToken');
+    localStorage.removeItem('hrRole');
+    window.location.href = 'hr-login.html';
+    return true;
+  }
+  return false;
+}
+
+// Live Clock
+function updateLiveClock() {
+  document.getElementById('liveClockDisplay').textContent = new Date().toLocaleTimeString();
+}
+setInterval(updateLiveClock, 1000);
+updateLiveClock();
+
+var currentEmployeeData = null;
+var activeProjForTasks = null;
+var allMailsList = [];
+
+// Fetch Logged In Profile
+function loadUserProfile() {
+  fetch(BASE_URL + '/me', { headers: authHeaders() })
+    .then(function(res) { if (checkAuth(res)) return null; return res.json(); })
+    .then(function(data) {
+      if (!data) return;
+      if (data.employee) {
+        currentEmployeeData = data.employee;
+        document.getElementById('empHeaderName').textContent = data.employee.name;
+        document.getElementById('sidebarAvatar').textContent = data.employee.name.substring(0, 2).toUpperCase();
+      }
+      loadTodayPunchStatus();
+      loadMails();
+      loadUnreadBadges();
+      loadMyProjects();
+      loadMyAssets();
+      loadMyAttendanceHistory();
+      loadMyLeaves();
+      loadMyPayslips();
+    });
+}
+
+var tabTitles = {
+  dashboard: { title: 'Punch Clock & Workspace Overview', sub: 'Log daily attendance shifts and view workspace alerts' },
+  mail: { title: 'Mail Center & Notifications', sub: 'Direct messages from HR, Leave status alerts & Payslip updates' },
+  projects: { title: 'My Assigned Projects', sub: 'Track project progress and complete assigned milestone tasks' },
+  assets: { title: 'My Hardware Equipment', sub: 'Assigned laptops, workstations and company property' },
+  attendance: { title: 'Attendance Logs History', sub: 'Review clock-in and clock-out timestamps' },
+  leaves: { title: 'Leave Applications', sub: 'Apply for time-off and track approval status' },
+  payslips: { title: 'My Monthly Payslips', sub: 'Download pay breakdown and attendance deduction receipts' }
+};
+
+function switchTab(tabName) {
+  var navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(function(item) { item.classList.remove('active'); });
+
+  var targetNav = document.querySelector('.nav-item[onclick*="' + tabName + '"]');
+  if (targetNav) targetNav.classList.add('active');
+
+  var panels = document.querySelectorAll('.tab-panel');
+  panels.forEach(function(p) { p.classList.remove('active'); });
+
+  var targetPanel = document.getElementById(tabName + 'Panel');
+  if (targetPanel) targetPanel.classList.add('active');
+
+  if (tabTitles[tabName]) {
+    document.getElementById('pageTitle').textContent = tabTitles[tabName].title;
+    document.getElementById('pageSubtitle').textContent = tabTitles[tabName].sub;
+  }
+
+  if (tabName === 'mail') loadMails();
+}
+
+// ---------------- PUNCH CLOCK ----------------
+function loadTodayPunchStatus() {
+  fetch(BASE_URL + '/attendance/today', { headers: authHeaders() })
+    .then(function(res) { if (checkAuth(res)) return null; return res.json(); })
+    .then(function(att) {
+      var statusText = document.getElementById('punchStatusText');
+      var clockInText = document.getElementById('clockInText');
+      var clockOutText = document.getElementById('clockOutText');
+      var punchInBtn = document.getElementById('punchInBtn');
+      var punchOutBtn = document.getElementById('punchOutBtn');
+
+      if (!att || !att.clockIn) {
+        statusText.textContent = 'Not Punched In Today';
+        statusText.style.color = '#cbd5e1';
+        clockInText.textContent = '-';
+        clockOutText.textContent = '-';
+        punchInBtn.style.display = 'inline-block';
+        punchOutBtn.style.display = 'none';
+      } else if (att.clockIn && !att.clockOut) {
+        statusText.textContent = 'Active Shift (Punched In)';
+        statusText.style.color = '#4ade80';
+        clockInText.textContent = formatTime(att.clockIn);
+        clockOutText.textContent = '-';
+        punchInBtn.style.display = 'none';
+        punchOutBtn.style.display = 'inline-block';
+      } else {
+        statusText.textContent = 'Shift Completed (Punched Out)';
+        statusText.style.color = '#38bdf8';
+        clockInText.textContent = formatTime(att.clockIn);
+        clockOutText.textContent = formatTime(att.clockOut);
+        punchInBtn.style.display = 'none';
+        punchOutBtn.style.display = 'none';
+      }
+    });
+}
+
+function formatTime(iso) {
+  if (!iso) return '-';
+  return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+document.getElementById('punchInBtn').addEventListener('click', function() {
+  fetch(BASE_URL + '/attendance/punch-in', { method: 'POST', headers: authHeaders() })
+    .then(function(res) { return res.json(); })
+    .then(function() { loadTodayPunchStatus(); loadMyAttendanceHistory(); });
+});
+
+document.getElementById('punchOutBtn').addEventListener('click', function() {
+  fetch(BASE_URL + '/attendance/punch-out', { method: 'POST', headers: authHeaders() })
+    .then(function(res) { return res.json(); })
+    .then(function() { loadTodayPunchStatus(); loadMyAttendanceHistory(); });
+});
+
+// ---------------- MAIL FUNCTIONS ----------------
+function loadMails() {
+  fetch(BASE_URL + '/mail/inbox', { headers: authHeaders() })
+    .then(function(res) { if (checkAuth(res)) return null; return res.json(); })
+    .then(function(mails) {
+      if (!mails) return;
+      allMailsList = mails;
+      renderMails();
+      updateUnreadBadges();
+    });
+}
+
+function updateUnreadBadges() {
+  fetch(BASE_URL + '/mail/unread-count', { headers: authHeaders() })
+    .then(function(res) { if (checkAuth(res)) return null; return res.json(); })
+    .then(function(data) {
+      if (!data) return;
+      var count = data.unreadCount;
+      var badgeEl = document.getElementById('sidebarMailBadge');
+      var bellDot = document.getElementById('bellDot');
+      if (count > 0) {
+        badgeEl.textContent = count; badgeEl.style.display = 'inline-block';
+        bellDot.style.display = 'block';
+      } else {
+        badgeEl.style.display = 'none';
+        bellDot.style.display = 'none';
+      }
+    });
+}
+
+function renderMails() {
+  var tbody = document.getElementById('mailTableBody');
+  var emptyMsg = document.getElementById('mailEmptyMsg');
+  tbody.innerHTML = '';
+
+  if (allMailsList.length === 0) {
+    emptyMsg.style.display = 'block';
+    return;
+  }
+  emptyMsg.style.display = 'none';
+
+  allMailsList.forEach(function(mail) {
+    var tr = document.createElement('tr');
+    var catClass = 'badge-direct';
+    if (mail.category === 'Leave') catClass = 'badge-leave';
+    else if (mail.category === 'Payroll') catClass = 'badge-payroll';
+    else if (mail.category === 'Project') catClass = 'badge-project';
+
+    var dateStr = new Date(mail.createdAt).toLocaleString();
+    var unreadStyle = mail.read ? '' : 'font-weight:700; color:#ffffff;';
+
+    tr.innerHTML =
+      '<td><span class="badge ' + catClass + '">' + mail.category + '</span></td>' +
+      '<td><strong>' + mail.senderName + '</strong></td>' +
+      '<td style="' + unreadStyle + '">' + mail.subject + '</td>' +
+      '<td>' + dateStr + '</td>' +
+      '<td>' + (mail.read ? '<span style="color:#64748b;">Read</span>' : '<span style="color:#facc15; font-weight:700;">Unread</span>') + '</td>' +
+      '<td></td>';
+
+    var readBtn = document.createElement('button');
+    readBtn.className = 'btn-secondary';
+    readBtn.textContent = 'View Mail';
+    readBtn.addEventListener('click', function() { openReadMailModal(mail); });
+
+    tr.lastChild.appendChild(readBtn);
+    tbody.appendChild(tr);
+  });
+}
+
+function openReadMailModal(mail) {
+  document.getElementById('mailModalSubject').textContent = mail.subject;
+  document.getElementById('mailModalSender').textContent = mail.senderName + ' (' + mail.senderEmail + ')';
+  document.getElementById('mailModalCategory').textContent = mail.category;
+  document.getElementById('mailModalCategory').className = 'badge badge-direct';
+  document.getElementById('mailModalDate').textContent = new Date(mail.createdAt).toLocaleString();
+  document.getElementById('mailModalBody').textContent = mail.body;
+
+  document.getElementById('replyMailBtn').onclick = function() {
+    closeReadMailModal();
+    openComposeMailModal(mail.senderEmail, 'Re: ' + mail.subject);
+  };
+
+  document.getElementById('readMailModal').classList.remove('hidden');
+
+  if (!mail.read) {
+    fetch(BASE_URL + '/mail/' + mail._id + '/read', { method: 'PUT', headers: authHeaders() })
+      .then(function() { loadMails(); });
+  }
+}
+
+function closeReadMailModal() { document.getElementById('readMailModal').classList.add('hidden'); }
+function openComposeMailModal(recipient, subject) {
+  if (recipient) document.getElementById('composeRecipientInput').value = recipient;
+  if (subject) document.getElementById('composeSubjectInput').value = subject;
+  document.getElementById('composeMailModal').classList.remove('hidden');
+}
+function closeComposeMailModal() { document.getElementById('composeMailModal').classList.add('hidden'); }
+
+function sendMail() {
+  var rec = document.getElementById('composeRecipientInput').value.trim();
+  var sub = document.getElementById('composeSubjectInput').value.trim();
+  var body = document.getElementById('composeBodyInput').value.trim();
+
+  if (!rec || !sub || !body) { alert('Please fill out all fields.'); return; }
+
+  fetch(BASE_URL + '/mail/send', {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ recipientEmail: rec, subject: sub, category: 'Direct', body: body })
+  })
+  .then(function(res) { if (checkAuth(res)) return null; return res.json(); })
+  .then(function(data) {
+    if (data) {
+      closeComposeMailModal();
+      document.getElementById('composeSubjectInput').value = '';
+      document.getElementById('composeBodyInput').value = '';
+      loadMails();
+      alert('Message sent to HR!');
+    }
+  });
+}
+
+// ---------------- PROJECTS ----------------
+function loadMyProjects() {
+  fetch(BASE_URL + '/projects', { headers: authHeaders() })
+    .then(function(res) { if (checkAuth(res)) return null; return res.json(); })
+    .then(function(projects) { if (projects) renderMyProjects(projects); });
+}
+
+function renderMyProjects(projects) {
+  var tbody = document.getElementById('empProjTableBody');
+  var emptyMsg = document.getElementById('empProjEmptyMsg');
+  tbody.innerHTML = '';
+  if (projects.length === 0) { emptyMsg.style.display = 'block'; return; }
+  emptyMsg.style.display = 'none';
+
+  projects.forEach(function(p) {
+    var tr = document.createElement('tr');
+    var totalTasks = p.tasks ? p.tasks.length : 0;
+    var completedTasks = p.tasks ? p.tasks.filter(function(t) { return t.completed; }).length : 0;
+    var pct = p.progressPercentage || 0;
+
+    tr.innerHTML =
+      '<td><strong>' + p.code + '</strong> - ' + p.title + '</td>' +
+      '<td>' + p.clientName + '</td>' +
+      '<td>' +
+        '<div><strong>' + pct + '%</strong></div>' +
+        '<div class="progress-bar-bg"><div class="progress-bar-fill" style="width:' + pct + '%;"></div></div>' +
+      '</td>' +
+      '<td></td>';
+
+    var tasksBtn = document.createElement('button');
+    tasksBtn.className = 'btn-secondary';
+    tasksBtn.textContent = 'Checklist (' + completedTasks + '/' + totalTasks + ')';
+    tasksBtn.addEventListener('click', function() { openEmpTasksModal(p); });
+
+    tr.lastChild.appendChild(tasksBtn);
+    tbody.appendChild(tr);
+  });
+}
+
+function openEmpTasksModal(project) {
+  activeProjForTasks = project;
+  document.getElementById('empTasksModalTitle').textContent = project.code + ' Task Checklist';
+  renderEmpTasksList();
+  document.getElementById('empTasksModal').classList.remove('hidden');
+}
+
+function closeEmpTasksModal() { document.getElementById('empTasksModal').classList.add('hidden'); }
+
+function renderEmpTasksList() {
+  var container = document.getElementById('empTasksListContainer');
+  container.innerHTML = '';
+  var tasks = activeProjForTasks.tasks || [];
+
+  if (tasks.length === 0) {
+    container.innerHTML = '<p style="color:#64748b; font-size:13px;">No tasks created for this project yet.</p>';
+    return;
+  }
+
+  tasks.forEach(function(task, index) {
+    var div = document.createElement('div');
+    div.style.cssText = 'display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.04); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);';
+
+    var chk = document.createElement('input'); chk.type = 'checkbox'; chk.checked = task.completed;
+    chk.style.cssText = 'width:18px; height:18px; cursor:pointer; accent-color:#06b6d4;';
+    chk.addEventListener('change', function() {
+      activeProjForTasks.tasks[index].completed = chk.checked;
+      saveEmpTaskUpdate();
+    });
+
+    var span = document.createElement('span');
+    span.style.cssText = 'flex:1; font-size:13px; color:' + (task.completed ? '#64748b' : '#f8fafc') + ';' + (task.completed ? 'text-decoration:line-through;' : '');
+    span.textContent = task.title;
+
+    div.appendChild(chk); div.appendChild(span); container.appendChild(div);
+  });
+}
+
+function saveEmpTaskUpdate() {
+  fetch(BASE_URL + '/projects/' + activeProjForTasks._id, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify({ tasks: activeProjForTasks.tasks })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(updatedProj) {
+    activeProjForTasks = updatedProj;
+    renderEmpTasksList();
+    loadMyProjects();
+  });
+}
+
+// ---------------- ASSETS ----------------
+function loadMyAssets() {
+  fetch(BASE_URL + '/assets', { headers: authHeaders() })
+    .then(function(res) { if (checkAuth(res)) return null; return res.json(); })
+    .then(function(assets) { if (assets) renderMyAssets(assets); });
+}
+
+function renderMyAssets(assets) {
+  var tbody = document.getElementById('empAssetTableBody');
+  var emptyMsg = document.getElementById('empAssetEmptyMsg');
+  tbody.innerHTML = '';
+
+  var myAssets = assets.filter(function(a) {
+    return a.assignedTo && (a.assignedTo._id === (currentEmployeeData ? currentEmployeeData._id : ''));
+  });
+
+  if (myAssets.length === 0) { emptyMsg.style.display = 'block'; return; }
+  emptyMsg.style.display = 'none';
+
+  myAssets.forEach(function(a) {
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><strong>' + a.assetTag + '</strong></td>' +
+      '<td>' + a.name + '</td>' +
+      '<td>' + a.category + '</td>' +
+      '<td>' + (a.serialNumber || '-') + '</td>' +
+      '<td><span class="badge badge-present">' + a.status + '</span></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+// ---------------- ATTENDANCE HISTORY ----------------
+function loadMyAttendanceHistory() {
+  fetch(BASE_URL + '/attendance', { headers: authHeaders() })
+    .then(function(res) { if (checkAuth(res)) return null; return res.json(); })
+    .then(function(list) { if (list) renderMyAttendance(list); });
+}
+
+function renderMyAttendance(list) {
+  var tbody = document.getElementById('empAttnTableBody');
+  var emptyMsg = document.getElementById('empAttnEmptyMsg');
+  tbody.innerHTML = '';
+  if (list.length === 0) { emptyMsg.style.display = 'block'; return; }
+  emptyMsg.style.display = 'none';
+
+  list.forEach(function(item) {
+    var tr = document.createElement('tr');
+    var badgeClass = item.clockIn ? 'badge-present' : 'badge-absent';
+    tr.innerHTML =
+      '<td><strong>' + item.date + '</strong></td>' +
+      '<td>' + formatTime(item.clockIn) + '</td>' +
+      '<td>' + formatTime(item.clockOut) + '</td>' +
+      '<td><span class="badge ' + badgeClass + '">' + (item.clockIn ? 'Present' : 'Absent') + '</span></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+// ---------------- LEAVES ----------------
+function loadMyLeaves() {
+  fetch(BASE_URL + '/leaves', { headers: authHeaders() })
+    .then(function(res) { if (checkAuth(res)) return null; return res.json(); })
+    .then(function(leaves) { if (leaves) renderMyLeaves(leaves); });
+}
+
+function renderMyLeaves(leaves) {
+  var tbody = document.getElementById('empLeaveTableBody');
+  var emptyMsg = document.getElementById('empLeaveEmptyMsg');
+  tbody.innerHTML = '';
+  if (leaves.length === 0) { emptyMsg.style.display = 'block'; return; }
+  emptyMsg.style.display = 'none';
+
+  leaves.forEach(function(l) {
+    var tr = document.createElement('tr');
+    var statusClass = 'badge-pending';
+    if (l.status === 'approved') statusClass = 'badge-approved';
+    else if (l.status === 'rejected') statusClass = 'badge-rejected';
+
+    tr.innerHTML =
+      '<td><strong>' + l.type + '</strong></td>' +
+      '<td>' + l.startDate + '</td>' +
+      '<td>' + l.endDate + '</td>' +
+      '<td>' + (l.reason || '-') + '</td>' +
+      '<td><span class="badge ' + statusClass + '">' + l.status + '</span></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+document.getElementById('applyLeaveBtn').addEventListener('click', function() {
+  var type = document.getElementById('leaveTypeSelect').value;
+  var start = document.getElementById('leaveStartInput').value;
+  var end = document.getElementById('leaveEndInput').value;
+  var reason = document.getElementById('leaveReasonInput').value.trim();
+  var msgEl = document.getElementById('leaveMsg');
+
+  if (!start || !end) {
+    msgEl.style.color = '#f87171'; msgEl.textContent = 'Start Date and End Date are required.'; return;
+  }
+
+  fetch(BASE_URL + '/leaves', {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ type: type, startDate: start, endDate: end, reason: reason })
+  })
+  .then(function(res) { if (checkAuth(res)) return null; return res.json(); })
+  .then(function(data) {
+    if (data) {
+      msgEl.style.color = '#4ade80'; msgEl.textContent = 'Leave application submitted to HR.';
+      document.getElementById('leaveStartInput').value = ''; document.getElementById('leaveEndInput').value = ''; document.getElementById('leaveReasonInput').value = '';
+      loadMyLeaves();
+    }
+  });
+});
+
+// ---------------- PAYSLIPS ----------------
+function loadMyPayslips() {
+  fetch(BASE_URL + '/payslips', { headers: authHeaders() })
+    .then(function(res) { if (checkAuth(res)) return null; return res.json(); })
+    .then(function(payslips) { if (payslips) renderMyPayslips(payslips); });
+}
+
+function renderMyPayslips(payslips) {
+  var tbody = document.getElementById('empPayslipTableBody');
+  var emptyMsg = document.getElementById('empPayslipEmptyMsg');
+  tbody.innerHTML = '';
+  if (payslips.length === 0) { emptyMsg.style.display = 'block'; return; }
+  emptyMsg.style.display = 'none';
+
+  payslips.forEach(function(p) {
+    var tr = document.createElement('tr');
+    var missedText = (p.missedDays || 0) > 0 ? ('$' + (p.autoDeduction || 0) + ' (' + p.missedDays + ' days)') : '$0';
+    var genDate = new Date(p.generatedAt || Date.now()).toLocaleDateString();
+
+    tr.innerHTML =
+      '<td><strong>' + p.month + '</strong></td>' +
+      '<td>$' + p.baseSalary.toLocaleString() + '</td>' +
+      '<td>$' + p.allowances.toLocaleString() + '</td>' +
+      '<td>$' + p.deductions.toLocaleString() + '</td>' +
+      '<td style="color:#f87171;">' + missedText + '</td>' +
+      '<td><strong style="color:#4ade80;">$' + p.netPay.toLocaleString() + '</strong></td>' +
+      '<td>' + genDate + '</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', function() {
+  localStorage.removeItem('hrToken');
+  localStorage.removeItem('hrRole');
+  window.location.href = 'hr-login.html';
+});
+
+// Init
+loadUserProfile();
+</script>
+</body>
+</html>
