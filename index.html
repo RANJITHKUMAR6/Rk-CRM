@@ -268,7 +268,7 @@ input:focus, select:focus {
 </div>
 
 <script>
-var BASE_URL = 'https://rk-crm-21.onrender.com';
+var BASE_URL = 'https://rk-crm-21.onrender.com/api';
 
 try {
   var existingToken = localStorage.getItem('hrToken');
@@ -328,8 +328,7 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
   messageEl.style.background = 'rgba(99, 102, 241, 0.2)';
   messageEl.style.color = '#818cf8';
 
-  // Change the old URL or localhost address
-fetch('https://onrender.com', {
+  fetch(BASE_URL + '/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: email, password: password }),
