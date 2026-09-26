@@ -328,7 +328,8 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
   messageEl.style.background = 'rgba(99, 102, 241, 0.2)';
   messageEl.style.color = '#818cf8';
 
-  fetch(BASE_URL + '/login', {
+  // Change the old URL or localhost address
+fetch('https://onrender.com', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: email, password: password }),
