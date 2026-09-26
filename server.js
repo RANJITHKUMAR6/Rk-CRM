@@ -6,7 +6,30 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 const app = express();
-app.use(cors());
+
+// Allow your deployed frontend(s) plus local dev. Add any other frontend
+// URLs you deploy to this list.
+const allowedOrigins = [
+  "https://rk-crm-10.onrender.com",
+  "https://rk-crm-frontend.onrender.com",
+  "http://localhost:5500",
+  "http://127.0.0.1:5500",
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (curl, mobile apps, server-to-server)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS: " + origin));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
+
+// Parse JSON request bodies — required for req.body to work on any route
 app.use(express.json());
 
 const MONGO_URI = process.env.MONGO_URI;
@@ -1232,4 +1255,4 @@ app.delete("/api/mail/:id", authenticateToken, async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5002;
-app.listen(PORT, () => console.log(`HR server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`HR server running on port ${PORT}`));gt
