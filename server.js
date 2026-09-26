@@ -1255,4 +1255,4 @@ app.delete("/api/mail/:id", authenticateToken, async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5002;
-app.listen(PORT, () => console.log(`HR server running on port ${PORT}`));gt
+app.listen(PORT, () => console.log(`HR server running on port ${PORT}`));
