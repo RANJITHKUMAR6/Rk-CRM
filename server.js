@@ -10,8 +10,7 @@ const app = express();
 // Allow your deployed frontend(s) plus local dev. Add any other frontend
 // URLs you deploy to this list.
 const allowedOrigins = [
-  "https://rk-crm-10.onrender.com",
-  "https://rk-crm-frontend.onrender.com",
+  "https://rk-crm-66.onrender.com",
   "http://localhost:5500",
   "http://127.0.0.1:5500",
 ];
