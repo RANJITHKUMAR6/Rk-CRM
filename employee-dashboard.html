@@ -769,7 +769,7 @@ tr:hover td { background: rgba(255, 255, 255, 0.03); }
 </div>
 
 <script>
-var BASE_URL = window.location.origin.startsWith('http') ? window.location.origin + '/api' : 'https://rk-crm-21.onrender.com/api';
+var BASE_URL = 'https://rk-crm-21.onrender.com/api';
 var token = localStorage.getItem('hrToken');
 var role = localStorage.getItem('hrRole');
 
@@ -818,7 +818,7 @@ function loadUserProfile() {
       }
       loadTodayPunchStatus();
       loadMails();
-      loadUnreadBadges();
+      updateUnreadBadges();
       loadMyProjects();
       loadMyAssets();
       loadMyAttendanceHistory();
@@ -900,13 +900,13 @@ function formatTime(iso) {
 }
 
 document.getElementById('punchInBtn').addEventListener('click', function() {
-  fetch(BASE_URL + '/attendance/punch-in', { method: 'POST', headers: authHeaders() })
+  fetch(BASE_URL + '/attendance/clock-in', { method: 'POST', headers: authHeaders() })
     .then(function(res) { return res.json(); })
     .then(function() { loadTodayPunchStatus(); loadMyAttendanceHistory(); });
 });
 
 document.getElementById('punchOutBtn').addEventListener('click', function() {
-  fetch(BASE_URL + '/attendance/punch-out', { method: 'POST', headers: authHeaders() })
+  fetch(BASE_URL + '/attendance/clock-out', { method: 'POST', headers: authHeaders() })
     .then(function(res) { return res.json(); })
     .then(function() { loadTodayPunchStatus(); loadMyAttendanceHistory(); });
 });
@@ -1157,7 +1157,7 @@ function renderMyAssets(assets) {
 
 // ---------------- ATTENDANCE HISTORY ----------------
 function loadMyAttendanceHistory() {
-  fetch(BASE_URL + '/attendance', { headers: authHeaders() })
+  fetch(BASE_URL + '/attendance/my-history', { headers: authHeaders() })
     .then(function(res) { if (checkAuth(res)) return null; return res.json(); })
     .then(function(list) { if (list) renderMyAttendance(list); });
 }
