@@ -268,7 +268,7 @@ input:focus, select:focus {
 </div>
 
 <script>
-var BASE_URL = window.location.origin.startsWith('http') ? window.location.origin + '/api' : 'https://rk-crm-21.onrender.com/api';
+var BASE_URL = 'https://rk-crm-21.onrender.com/api';
 
 try {
   var existingToken = localStorage.getItem('hrToken');
@@ -328,32 +328,45 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
   messageEl.style.background = 'rgba(99, 102, 241, 0.2)';
   messageEl.style.color = '#818cf8';
 
-  fetch(BASE_URL + '/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email, password: password }),
-  })
-    .then(function (res) {
-      return res.json().then(function (data) { return { ok: res.ok, data: data }; });
+  function attemptLogin(retriesLeft) {
+    fetch(BASE_URL + '/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password }),
     })
-    .then(function (result) {
-      if (result.ok && result.data.token && result.data.role) {
-        localStorage.setItem('hrToken', result.data.token);
-        localStorage.setItem('hrRole', result.data.role);
-        var targetPage = result.data.role === 'admin' ? 'hr.html' : 'employee-dashboard.html';
-        window.location.href = targetPage;
-      } else {
+      .then(function (res) {
+        return res.text().then(function (text) {
+          if (!text) { throw new Error('EMPTY_RESPONSE'); }
+          var data = JSON.parse(text);
+          return { ok: res.ok, data: data };
+        });
+      })
+      .then(function (result) {
+        if (result.ok && result.data.token && result.data.role) {
+          localStorage.setItem('hrToken', result.data.token);
+          localStorage.setItem('hrRole', result.data.role);
+          var targetPage = result.data.role === 'admin' ? 'hr.html' : 'employee-dashboard.html';
+          window.location.href = targetPage;
+        } else {
+          messageEl.style.background = 'rgba(239, 68, 68, 0.2)';
+          messageEl.style.color = '#f87171';
+          messageEl.textContent = result.data.message || 'Login failed';
+        }
+      })
+      .catch(function (err) {
+        if (retriesLeft > 0) {
+          messageEl.textContent = 'Retrying connection...';
+          setTimeout(function () { attemptLogin(retriesLeft - 1); }, 700);
+          return;
+        }
+        console.error(err);
         messageEl.style.background = 'rgba(239, 68, 68, 0.2)';
         messageEl.style.color = '#f87171';
-        messageEl.textContent = result.data.message || 'Login failed';
-      }
-    })
-    .catch(function (err) {
-      console.error(err);
-      messageEl.style.background = 'rgba(239, 68, 68, 0.2)';
-      messageEl.style.color = '#f87171';
-      messageEl.textContent = 'Server connection error.';
-    });
+        messageEl.textContent = 'Server connection error.';
+      });
+  }
+
+  attemptLogin(1);
 });
 
 document.getElementById('registerForm').addEventListener('submit', function (e) {
