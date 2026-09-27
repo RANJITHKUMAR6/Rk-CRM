@@ -1711,7 +1711,7 @@ function loadDailyAttendance() {
     datePicker.value = today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate());
   }
 
-  fetch(BASE_URL + '/attendance?date=' + datePicker.value, { headers: authHeaders() })
+  fetch(BASE_URL + '/attendance/daily?date=' + datePicker.value, { headers: authHeaders() })
     .then(function (res) { if (checkAuth(res)) return null; return res.json(); })
     .then(function (list) { if (list) renderDailyAttendance(list, datePicker.value); });
 }
@@ -1993,7 +1993,7 @@ document.getElementById('logoutBtn').addEventListener('click', function () {
 
 // Initialization
 loadDashboardStats();
-loadUnreadBadges();
+updateUnreadBadges();
 loadMails();
 loadDepartments();
 loadProjects();
