@@ -9,27 +9,18 @@ const app = express();
 
 // Allow your deployed frontend(s) plus local dev. Add any other frontend
 // URLs you deploy to this list.
-const allowedOrigins = [
-  "https://rk-crm-66.onrender.com",
-  "http://localhost:5500",
-  "http://127.0.0.1:5500",
-];
-
+// Enable CORS for all allowed origins & dynamic requests
 app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (curl, mobile apps, server-to-server)
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS: " + origin));
-    }
-  },
+  origin: true,
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
 // Parse JSON request bodies — required for req.body to work on any route
 app.use(express.json());
+// Serve static frontend files (index.html, hr.html, employee-dashboard.html)
+app.use(express.static(__dirname));
 
 const MONGO_URI = process.env.MONGO_URI;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -48,9 +39,24 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
   });
 }
 
-mongoose.connect(MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+async function connectDB() {
+  try {
+    await mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 5000 });
+    console.log("MongoDB connected to primary database URI");
+  } catch (err) {
+    console.warn("Primary MongoDB connection error:", err.message);
+    try {
+      const { MongoMemoryServer } = require("mongodb-memory-server");
+      const mongoServer = await MongoMemoryServer.create();
+      const uri = mongoServer.getUri();
+      await mongoose.connect(uri);
+      console.log("MongoDB connected using local in-memory fallback database:", uri);
+    } catch (fallbackErr) {
+      console.error("Fallback MongoDB connection error:", fallbackErr.message);
+    }
+  }
+}
+connectDB();
 
 // ---- Employee schema/model ----
 const employeeSchema = new mongoose.Schema({
@@ -408,8 +414,8 @@ function getLocalDateString(d = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
-// Clock-In (Employee)
-app.post("/api/attendance/clock-in", authenticateToken, async (req, res) => {
+// Clock-In / Punch-In (Employee)
+app.post(["/api/attendance/clock-in", "/api/attendance/punch-in"], authenticateToken, async (req, res) => {
   try {
     if (req.user.role !== "employee" || !req.user.employeeId) {
       return res.status(403).json({ message: "Only employees can clock in" });
@@ -442,8 +448,8 @@ app.post("/api/attendance/clock-in", authenticateToken, async (req, res) => {
   }
 });
 
-// Clock-Out (Employee)
-app.post("/api/attendance/clock-out", authenticateToken, async (req, res) => {
+// Clock-Out / Punch-Out (Employee)
+app.post(["/api/attendance/clock-out", "/api/attendance/punch-out"], authenticateToken, async (req, res) => {
   try {
     if (req.user.role !== "employee" || !req.user.employeeId) {
       return res.status(403).json({ message: "Only employees can clock out" });
@@ -735,15 +741,24 @@ app.get("/api/dashboard/stats", authenticateToken, async (req, res) => {
     let pipelineValue = 0;
     activeDeals.forEach(d => pipelineValue += (d.value || 0));
 
+    const todayStr = getLocalDateString();
+    const todayAttn = await Attendance.countDocuments({ date: todayStr, clockIn: { $ne: null } });
+    const attnPercent = totalEmployees > 0 ? Math.round((todayAttn / totalEmployees) * 100) : 0;
+
     res.json({
       totalEmployees,
       totalDepartments,
+      totalProjects: activeProjects,
       activeProjects,
       avgProgress,
       totalPayroll,
       totalAssets,
       pendingLeaves,
-      pipelineValue
+      pendingLeavesCount: pendingLeaves,
+      pipelineValue,
+      activeDealsCount: activeDeals.length,
+      todayAttendance: todayAttn,
+      attendancePercentage: attnPercent
     });
   } catch (err) {
     console.error(err);
@@ -1205,7 +1220,7 @@ app.post("/api/mail/send", authenticateToken, async (req, res) => {
     }
 
     const recipientUser = await User.findOne({ email: recipientEmail });
-    const senderUser = await User.findById(req.user.userId);
+    const senderUser = await User.findById(req.user.id || req.user.userId);
     const senderEmail = req.user.email;
     let senderName = req.user.role === "admin" ? "HR Admin" : senderEmail.split("@")[0];
     if (req.user.role === "employee" && req.user.employeeId) {

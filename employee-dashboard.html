@@ -769,12 +769,12 @@ tr:hover td { background: rgba(255, 255, 255, 0.03); }
 </div>
 
 <script>
-var BASE_URL = 'https://rk-crm-21.onrender.com';
+var BASE_URL = window.location.origin.startsWith('http') ? window.location.origin + '/api' : 'https://rk-crm-21.onrender.com/api';
 var token = localStorage.getItem('hrToken');
 var role = localStorage.getItem('hrRole');
 
 if (!token || role !== 'employee') {
-  window.location.href = 'hr-login.html';
+  window.location.href = 'index.html';
 }
 
 function authHeaders() {
@@ -788,7 +788,7 @@ function checkAuth(res) {
   if (res.status === 401 || res.status === 403) {
     localStorage.removeItem('hrToken');
     localStorage.removeItem('hrRole');
-    window.location.href = 'hr-login.html';
+    window.location.href = 'index.html';
     return true;
   }
   return false;
@@ -1272,7 +1272,7 @@ function renderMyPayslips(payslips) {
 document.getElementById('logoutBtn').addEventListener('click', function() {
   localStorage.removeItem('hrToken');
   localStorage.removeItem('hrRole');
-  window.location.href = 'hr-login.html';
+  window.location.href = 'index.html';
 });
 
 // Init
